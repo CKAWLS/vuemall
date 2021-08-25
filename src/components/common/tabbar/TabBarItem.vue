@@ -15,9 +15,6 @@
 <script>
 export default {
   name: "TabBarItem",
-  data() {
-    return{}
-  },
   computed: {
     isActive() {
       return this.$route.path.indexOf(this.path) !== -1
@@ -27,7 +24,7 @@ export default {
     }
   },
   props: {
-    path: String,
+      path: String,
     activeColor: {
       type: String,
       default: 'red'

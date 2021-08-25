@@ -2,24 +2,28 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
   {
+    path: '/',
+    component: () => import('../App')
+  },
+  {
     path: '/home',
     name: 'Home',
-    component: () => import('../views/home/home')
+    component: () => import('../views/home/Home')
   },
   {
     path: '/category',
     name: 'Category',
-    component: () => import('../views/category/category')
+    component: () => import('../views/category/Category')
   },
   {
     path: '/cart',
     name: 'Cart',
-    component: () => import('../views/cart/cart')
+    component: () => import('../views/cart/Cart')
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: () => import('../views/profile/profile')
+    component: () => import('../views/profile/Profile')
   }
 ]
 

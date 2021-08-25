@@ -2,10 +2,10 @@
   <tab-bar>
     <tab-bar-item path="/home" active-color="pink">
       <template v-slot:item-icon>
-        <img src="../../assets/img/tarbar/home.svg" alt="home">
+        <img src="@/assets/img/tarbar/home.svg" alt="home">
       </template>
       <template v-slot:item-icon-active>
-        <img src="../../assets/img/tarbar/home_active.svg" alt="home">
+        <img src="@/assets/img/tarbar/home_active.svg" alt="home">
       </template>
       <template v-slot:item-text>
         <div>首页</div>
@@ -13,10 +13,10 @@
     </tab-bar-item>
     <tab-bar-item path="/category">
       <template v-slot:item-icon>
-        <img src="../../assets/img/tarbar/class.svg" alt="">
+        <img src="@/assets/img/tarbar/class.svg" alt="">
       </template>
       <template v-slot:item-icon-active>
-        <img src="../../assets/img/tarbar/class_active.svg" alt="category">
+        <img src="@/assets/img/tarbar/class_active.svg" alt="category">
       </template>
       <template v-slot:item-text>
         <div>分类</div>
@@ -24,10 +24,10 @@
     </tab-bar-item>
     <tab-bar-item path="/cart">
       <template v-slot:item-icon>
-        <img src="../../assets/img/tarbar/cart.svg" alt="">
+        <img src="@/assets/img/tarbar/cart.svg" alt="">
       </template>
       <template v-slot:item-icon-active>
-        <img src="../../assets/img/tarbar/cart_active.svg" alt="cart">
+        <img src="@/assets/img/tarbar/cart_active.svg" alt="cart">
       </template>
       <template v-slot:item-text>
         <div>购物车</div>
@@ -35,10 +35,10 @@
     </tab-bar-item>
     <tab-bar-item path="/profile">
       <template v-slot:item-icon>
-        <img src="../../assets/img/tarbar/mime.svg" alt="">
+        <img src="@/assets/img/tarbar/mime.svg" alt="">
       </template>
       <template v-slot:item-icon-active>
-        <img src="../../assets/img/tarbar/mime_active.svg" alt="profile">
+        <img src="@/assets/img/tarbar/mime_active.svg" alt="profile">
       </template>
       <template v-slot:item-text>
         <div>我的</div>
