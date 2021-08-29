@@ -9,9 +9,9 @@ export function getHomeMultiData() {
 export function getHomeGoodsXX(type, page) {
   return request1({
     url: 'home/data',
-    query: {
-      type: type,
-      page: page
+    params: {
+      type,
+      page
     }
   })
 }
