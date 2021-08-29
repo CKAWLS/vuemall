@@ -38,7 +38,7 @@ export default {
   display: flex;
   text-align: center;
   font-size: 14px;
-  z-index: 999;
+  z-index: 998;
 }
 
 .tab-control-item {

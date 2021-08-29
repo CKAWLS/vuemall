@@ -1,5 +1,5 @@
 <template>
-  <tab-bar>
+  <tab-bar class="main-tab-bar">
     <tab-bar-item path="/home" active-color="pink">
       <template v-slot:item-icon>
         <img src="@/assets/img/tarbar/home.svg" alt="home">
@@ -58,5 +58,7 @@ export default {
 </script>
 
 <style scoped>
-
+.main-tab-bar {
+  z-index: 999;
+}
 </style>

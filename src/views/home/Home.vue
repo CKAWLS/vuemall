@@ -5,13 +5,15 @@
         <span>购物街</span>
       </template>
     </nav-bar>
-    <home-swiper :banner="banner"></home-swiper>
-    <home-recommend :recommend="recommend"></home-recommend>
-    <home-feature></home-feature>
-    <tab-control class="tab-control"
-                 :title="['流行','新款','精选']"
-                 @tabClick="tabClick"></tab-control>
-    <goods-list :goods="showGoods"></goods-list>
+    <scroll class="content">
+      <home-swiper :banner="banner"></home-swiper>
+      <home-recommend :recommend="recommend"></home-recommend>
+      <home-feature></home-feature>
+      <tab-control class="tab-control"
+                   :title="['流行','新款','精选']"
+                   @tabClick="tabClick"></tab-control>
+      <goods-list :goods="showGoods"></goods-list>
+    </scroll>
   </div>
 </template>
 
@@ -19,6 +21,7 @@
 import NavBar from "../../components/common/navbar/NavBar";
 import TabControl from "../../components/content/tabControl/TabControl";
 import GoodsList from "../../components/content/good/GoodsList";
+import Scroll from "../../components/common/scroll/Scroll";
 
 import HomeSwiper from "./childComponents/HomeSwiper";
 import HomeRecommend from "./childComponents/HomeRecommend";
@@ -31,6 +34,7 @@ export default {
     NavBar,
     TabControl,
     GoodsList,
+    Scroll,
 
     HomeFeature,
     HomeSwiper,
@@ -56,11 +60,17 @@ export default {
   methods: {
     //事件监听
     tabClick(index) {
-       switch (index) {
-         case 1 : this.currentType = 'sell';break;
-         case 2 : this.currentType = 'new';break;
-         case 0 : this.currentType = 'pop';break;
-       }
+      switch (index) {
+        case 1 :
+          this.currentType = 'sell';
+          break;
+        case 2 :
+          this.currentType = 'new';
+          break;
+        case 0 :
+          this.currentType = 'pop';
+          break;
+      }
     },
     //网络请求
     getHomeMultiData() {
@@ -72,7 +82,7 @@ export default {
         this.recommend = res.data.recommend.list
       })
     },
-    getHomeGoods(type){
+    getHomeGoods(type) {
       const page = this.goods[type].page + 1
       getHomeGoodsXX(type, page).then(res => {
         console.log(res);
@@ -95,9 +105,13 @@ export default {
 </script>
 
 <style scoped>
-#home{
+#home {
   padding-top: 44px;
+  /*vh: view height 窗口高宽*/
+  height: 100vh;
+  position: relative;
 }
+
 .home-nav {
   color: white;
   background: var(--color-tint);
@@ -109,10 +123,19 @@ export default {
   /*top: 0;*/
   /*z-index: 999;*/
 }
+
 /*吸顶效果*/
 .tab-control {
   position: sticky;
   top: 44px;
   background: #fff;
+}
+
+.content {
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
 }
 </style>
