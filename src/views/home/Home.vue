@@ -5,7 +5,12 @@
         <span>购物街</span>
       </template>
     </nav-bar>
-    <scroll class="content">
+    <scroll class="content"
+            @scroll="homeScroll"
+            :probe-type="3"
+            :pull-up-load="true"
+            ref="scroll"
+            @pullingUp="loadMore">
       <home-swiper :banner="banner"></home-swiper>
       <home-recommend :recommend="recommend"></home-recommend>
       <home-feature></home-feature>
@@ -14,6 +19,11 @@
                    @tabClick="tabClick"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
+    <back-top class="back-top" @click="backToTop" v-if="this.isUpToTop">
+      <template v-slot:scrollTop>
+        <img src="../../assets/img/top.png" alt="">
+      </template>
+    </back-top>
   </div>
 </template>
 
@@ -22,6 +32,7 @@ import NavBar from "../../components/common/navbar/NavBar";
 import TabControl from "../../components/content/tabControl/TabControl";
 import GoodsList from "../../components/content/good/GoodsList";
 import Scroll from "../../components/common/scroll/Scroll";
+import BackTop from "../../components/content/backTop/BackTop";
 
 import HomeSwiper from "./childComponents/HomeSwiper";
 import HomeRecommend from "./childComponents/HomeRecommend";
@@ -35,6 +46,7 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
+    BackTop,
 
     HomeFeature,
     HomeSwiper,
@@ -49,13 +61,14 @@ export default {
         'new': {page: 0, list: []},
         'sell': {page: 0, list: []},
       },
-      currentType: 'pop'
+      currentType: 'pop',
+      isUpToTop: false
     }
   },
   computed: {
     showGoods() {
       return this.goods[this.currentType].list
-    }
+    },
   },
   methods: {
     //事件监听
@@ -72,6 +85,15 @@ export default {
           break;
       }
     },
+    backToTop() {
+      this.$refs.scroll.scrollTo(0,0)
+    },
+    homeScroll(position) {
+      this.isUpToTop = (-position.y) > 1000
+    },
+    loadMore() {
+      this.getHomeGoods(this.currentType)
+    },
     //网络请求
     getHomeMultiData() {
       getHomeMultiData().then(res => {
@@ -85,7 +107,7 @@ export default {
     getHomeGoods(type) {
       const page = this.goods[type].page + 1
       getHomeGoodsXX(type, page).then(res => {
-        console.log(res);
+        //console.log(res);
         //... ES6的结构语法
         this.goods[type].list.push(...res.data.list)
         // for(let item of res.data.list){
@@ -137,5 +159,10 @@ export default {
   bottom: 49px;
   left: 0;
   right: 0;
+}
+
+.back-top img{
+  width: 50px;
+  height: 50px;
 }
 </style>
