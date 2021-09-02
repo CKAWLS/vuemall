@@ -8,12 +8,12 @@
 
 <script>
 import BScroll from "better-scroll";
-import {request1} from "../../../network/request";
 export default {
   name: "Scroll",
   data() {
     return {
-      scroll: null
+      scroll: null,
+      tabControlOffset: 0
     }
   },
   props: {
@@ -40,7 +40,7 @@ export default {
       click: true,
       probeType:this.probeType
     })
-    console.log(this.scroll);
+    //console.log(this.scroll);
     //监听上拉加载更多功能
     this.scroll.on('pullingUp', () => {
       this.$emit('pullingUp')

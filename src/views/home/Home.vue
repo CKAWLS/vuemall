@@ -5,18 +5,25 @@
         <span>购物街</span>
       </template>
     </nav-bar>
+    <tab-control class="tab-control"
+                 :title="['流行','新款','精选']"
+                 @tabClick="tabClick"
+                 ref="tabControlFix"
+                 v-show="isFixed"></tab-control>
     <scroll class="content"
             @scroll="homeScroll"
             :probe-type="3"
             :pull-up-load="true"
             ref="scroll"
             @pullingUp="loadMore">
-      <home-swiper :banner="banner"></home-swiper>
+      <home-swiper :banner="banner"
+                   @swiperImgLoad="swiperImgLoad"></home-swiper>
       <home-recommend :recommend="recommend"></home-recommend>
       <home-feature></home-feature>
-      <tab-control class="tab-control"
-                   :title="['流行','新款','精选']"
-                   @tabClick="tabClick"></tab-control>
+      <tab-control :title="['流行','新款','精选']"
+                   @tabClick="tabClick"
+                   ref="tabControl"
+                   v-show="!isFixed"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
     <back-top class="back-top" @click="backToTop" v-if="this.isUpToTop">
@@ -62,7 +69,10 @@ export default {
         'sell': {page: 0, list: []},
       },
       currentType: 'pop',
-      isUpToTop: false
+      isUpToTop: false,
+      offsetTop: 0,
+      isFixed: false,
+      offsetRecord: 0
     }
   },
   computed: {
@@ -84,12 +94,18 @@ export default {
           this.currentType = 'pop';
           break;
       }
+      this.$refs.tabControl.currentIndex = index
+      this.$refs.tabControlFix.currentIndex = index
+    },
+    swiperImgLoad() {
+      this.offsetTop = this.$refs.tabControl.$el.offsetTop
     },
     backToTop() {
-      this.$refs.scroll.scrollTo(0,0)
+      this.$refs.scroll.scrollTo(0, 0)
     },
     homeScroll(position) {
       this.isUpToTop = (-position.y) > 1000
+      this.isFixed = (-position.y) > this.offsetTop
     },
     loadMore() {
       this.getHomeGoods(this.currentType)
@@ -122,13 +138,24 @@ export default {
     this.getHomeGoods('pop')
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
+  },
+  mounted() {
+  },
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.offsetRecord, 0)
+    this.$refs.scroll.refresh()
+    console.log("被激活");
+  },
+  deactivated() {
+    this.offsetRecord = this.$refs.scroll.scroll.y
+    console.log(this.offsetRecord);
   }
 }
 </script>
 
 <style scoped>
 #home {
-  padding-top: 44px;
+  /*padding-top: 44px;*/
   /*vh: view height 窗口高宽*/
   height: 100vh;
   position: relative;
@@ -137,23 +164,34 @@ export default {
 .home-nav {
   color: white;
   background: var(--color-tint);
-  position: fixed;
+  /*在使用浏览器原生滚动时 为了让导航不跟随浏览器滚动*/;
+  position: relative;
   left: 0;
   right: 0;
   top: 0;
   /*position: sticky;*/
   /*top: 0;*/
-  /*z-index: 999;*/
 }
 
 /*吸顶效果*/
-.tab-control {
-  position: sticky;
-  top: 44px;
+/*.tabControl {*/
+/*  position: fixed;*/
+/*  left: 0;*/
+/*  right: 0;*/
+/*  top: 44px;*/
+/*  background: #fff;*/
+/*}*/
+
+/*不脱离原来位置的同时 提高显示级别*/
+.tab-control{
+  position: relative;
+  z-index: 9999;
   background: #fff;
 }
 
 .content {
+  overflow: hidden;
+
   position: absolute;
   top: 44px;
   bottom: 49px;
@@ -161,7 +199,7 @@ export default {
   right: 0;
 }
 
-.back-top img{
+.back-top img {
   width: 50px;
   height: 50px;
 }
