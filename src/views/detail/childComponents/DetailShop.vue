@@ -1,11 +1,11 @@
 <template>
   <div class="detail-shop-info" v-if="Object.keys(shop).length !== 0">
-    <div class="flex shop-name-info">
+    <div class="shop-name-info">
       <img :src="shop.logo" alt="" class="shop-img">
       <div>{{ shop.name }}</div>
     </div>
-    <div class="flex shop-other-info">
-      <div class="flex shop-other-item shop-other-sell">
+    <div class="shop-other-info">
+      <div class="shop-other-item shop-other-sell">
         <div>
           <p class="f16"> {{ saveNum(shop.sells) }} </p>
           <p>总销量</p>
@@ -16,10 +16,10 @@
         </div>
       </div>
       <div class="shop-other-item shop-other-right">
-        <div v-for="item in shop.score">
+        <div class="shop-comment" v-for="item in shop.score">
           {{ item.name }}&ensp;
-          <span class="score" :class="{active:item.isBetter}">{{ item.score }}</span>
-          <span class="score-bg" :class="{active:item.isBetter}">{{ item.isBetter ? '低' : '高' }}</span>
+          <span class="score" :class="{activeNum:item.isBetter}">{{ item.score }}</span>
+          <span class="score-bg" :class="{activeWord:item.isBetter}">{{ !item.isBetter ? '低' : '高' }}</span>
         </div>
       </div>
     </div>
@@ -68,27 +68,45 @@ export default {
 }
 
 .shop-other-info {
+  display: flex;
   font-size: 12px;
   align-items: center;
   line-height: 22px;
   height: 88px;
 }
 
-.shop-other-item {
+.shop-other-info > div{
   flex: 1;
+}
+
+.shop-other-item {
+  display: flex;
+}
+
+.shop-other-item div{
+  flex: 1;
+  padding-left: 15px;
 }
 
 .shop-other-sell {
   display: inline-block;
-  margin-left: 40px;
+  margin-left: 20px;
+  padding-bottom: 10px;
   border-right: 1px solid #ececec;
-  width: 50px;
+  width: 140px;
+  text-align: center;
+}
+
+.shop-other-sell div{
+  display: inline-block;
+  font-size: 14px;
 }
 
 .shop-other-right {
-  padding-left: 140px;
   display: inline-block;
+  padding-left: 20px;
   height: 88px;
+  text-align: center;
 }
 
 .score {
@@ -104,8 +122,13 @@ export default {
   font-size: 12px;
 }
 
-.active {
-  color: #880000;
+.activeNum {
+  color: #FB0909FF;
+}
+
+.activeWord {
+  color: #ffffff;
+  background-color: #FB0909FF;
 }
 
 .enter-shop-wrap {
@@ -119,6 +142,10 @@ export default {
   padding: 6px 30px;
   border-radius: 100px;
   margin: 10px;
+}
+
+.shop-comment {
+  font-size: 14px;
 }
 
 </style>

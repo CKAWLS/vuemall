@@ -8,6 +8,7 @@
 
 <script>
 import BScroll from "better-scroll";
+
 export default {
   name: "Scroll",
   data() {
@@ -38,25 +39,27 @@ export default {
       observeDOM: true,
       observeImage: true,
       click: true,
-      probeType:this.probeType
+      probeType: this.probeType
     })
     //console.log(this.scroll);
     //监听上拉加载更多功能
-    this.scroll.on('pullingUp', () => {
-      this.$emit('pullingUp')
-      this.scroll.finishPullUp()
-    })
+    if (this.pullUpLoad) {
+      this.scroll.on('pullingUp', () => {
+        this.$emit('pullingUp')
+        this.scroll.finishPullUp()
+      })
+    }
     //监听整个组件的滚动
     this.scroll.on('scroll', (position) => {
       this.$emit('scroll', position)
     })
   },
   methods: {
-    scrollTo(x, y, time=300) {
+    scrollTo(x, y, time = 300) {
       //逻辑与运算 当this.scroll为null时就不进行下面的运算了
       this.scroll && this.scroll.scrollTo(x, y, time)
     },
-    refresh(){
+    refresh() {
       this.scroll && this.scroll.refresh()
     }
   }
