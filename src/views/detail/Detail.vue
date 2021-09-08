@@ -1,15 +1,16 @@
 <template>
   <div id="detail">
-    <detail-nav-bar :title=title class="nav-bar"></detail-nav-bar>
+    <detail-nav-bar :title=title class="nav-bar" @navClick="scrollToX"></detail-nav-bar>
     <scroll :pull-up-load="false"
             :probe-type="3"
             class="content"
             ref="scroll">
       <detail-swiper :swiper-img="swiperImg" class="detail-swiper"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
-      <detail-shop :shop="shop"></detail-shop>
+      <detail-shop :shop="shop" ref="shop"></detail-shop>
       <detail-goods-info :detail-info="goodsInfo" @imageLoad="imageLoad"></detail-goods-info>
-      <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
+      <detail-comment-info :comment-info="commentInfo" ref="comment"></detail-comment-info>
+      <goods-list :goods="recommendInfo" @imgLoad="imgLoad" ref="recommend"></goods-list>
     </scroll>
   </div>
 </template>
@@ -23,7 +24,9 @@ import DetailGoodsInfo from "./childComponents/DetailGoodsInfo";
 import DetailCommentInfo from "./childComponents/DetailCommentInfo";
 
 import Scroll from "../../components/common/scroll/Scroll";
-import {detailRequest, Goods, Shop} from "../../network/detail/detail";
+import {detailRequest, recommendRequest, Goods, Shop} from "../../network/detail/detail";
+import GoodsList from "../../components/content/good/GoodsList";
+import {debounce} from "../../components/common/utils";
 
 export default {
   name: "Detail",
@@ -34,7 +37,8 @@ export default {
     DetailSwiper,
     DetailBaseInfo,
     DetailShop,
-    Scroll
+    Scroll,
+    GoodsList
   },
   data() {
     return {
@@ -44,16 +48,21 @@ export default {
       swiperImg: null,
       goods: {},
       shop: {},
-      goodsInfo:{},
-      commentInfo: {}
+      goodsInfo: {},
+      commentInfo: {},
+      recommendInfo: {},
+      navClickPosition: [],
+      getNavClickPosition: null
     }
   },
   computed: {},
   created() {
+    // 获取iid
     this.id = this.$route.query.id;
 
+    // 获取详情数据
     detailRequest(this.id).then((res) => {
-      console.log(res)
+      //console.log(res)
       this.detailInfo = res
       this.swiperImg = res.result.itemInfo.topImages
       // 获取商品信息
@@ -66,11 +75,58 @@ export default {
       if (res.result.rate.list) {
         this.commentInfo = res.result.rate.list[0];
       }
+
+      // this.$nextTick(() => {
+      //   // 根据最新的数据 DOM已经被渲染
+      //   // 图片还没有加载完成
+      //   this.navClickPosition = []
+      //
+      //   this.navClickPosition.push(0)
+      //   this.navClickPosition.push(this.$refs.comment.$el.offsetTop)
+      //   this.navClickPosition.push(this.$refs.shop.$el.offsetTop)
+      //   this.navClickPosition.push(this.$refs.recommend.$el.offsetTop)
+      //   console.log(this.navClickPosition)
+      // })
+
+      // 防抖函数 提高性能
+      this.getNavClickPosition = debounce(() => {
+        this.navClickPosition = []
+
+        this.navClickPosition.push(0)
+        this.navClickPosition.push(this.$refs.comment.$el.offsetTop)
+        this.navClickPosition.push(this.$refs.shop.$el.offsetTop)
+        this.navClickPosition.push(this.$refs.recommend.$el.offsetTop)
+
+        //console.log(this.navClickPosition)
+      },500)
     })
+
+    // 获取推荐数据
+    recommendRequest().then(res => {
+      //console.log(res)
+      this.recommendInfo = res.data.list
+    })
+
   },
   methods: {
-    imageLoad(){
+    imageLoad() {
+      if (this.$route.path.indexOf('detail') > -1) {
+        this.$refs.scroll.refresh()
+      }
+      this.getNavClickPosition()
+    },
+    imgLoad() {
       this.$refs.scroll.refresh()
+      this.getNavClickPosition()
+    },
+    scrollToX(index){
+      // switch (index){
+      //   case 0: this.$refs.scroll.scrollTo(0, 0, 300);break
+      //   case 1: this.$refs.scroll.scrollTo(0, -this.$refs.shop.$el.offsetTop, 300);break
+      //   case 2: this.$refs.scroll.scrollTo(0, -this.$refs.comment.$el.offsetTop, 300);break
+      //   case 3: this.$refs.scroll.scrollTo(0, -this.$refs.recommend.$el.offsetTop, 300);break
+      // }
+      this.$refs.scroll.scrollTo(0, -this.navClickPosition[index]+44, 300)
     }
   }
 }
@@ -84,7 +140,7 @@ export default {
   background-color: #ffffff;
 }
 
-.nav-bar{
+.nav-bar {
   position: relative;
   background-color: #ffffff;
   z-index: 100;

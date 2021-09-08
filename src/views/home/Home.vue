@@ -144,11 +144,11 @@ export default {
   activated() {
     this.$refs.scroll.scrollTo(0, this.offsetRecord, 0)
     this.$refs.scroll.refresh()
-    console.log("被激活");
+    //console.log("被激活");
   },
   deactivated() {
     this.offsetRecord = this.$refs.scroll.scroll.y
-    console.log(this.offsetRecord);
+    //console.log(this.offsetRecord);
   }
 }
 </script>

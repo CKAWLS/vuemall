@@ -1,6 +1,6 @@
 <template>
   <div class="goods">
-    <goods-list-item v-for="item in goods" :goodsItem="item"></goods-list-item>
+    <goods-list-item v-for="item in goods" :goodsItem="item" @imgLoad="imgLoad"></goods-list-item>
   </div>
 </template>
 
@@ -14,10 +14,15 @@ export default {
   },
   props: {
     goods: {
-      type: Array,
+      type: Object,
       default() {
         return []
       }
+    }
+  },
+  methods: {
+    imgLoad() {
+      this.$emit('imgLoad')
     }
   }
 }
