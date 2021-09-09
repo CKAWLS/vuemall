@@ -142,7 +142,7 @@ export default {
   mounted() {
   },
   activated() {
-    this.$refs.scroll.scrollTo(0, this.offsetRecord, 0)
+    this.$refs.scroll.scrollTo(0, this.offsetRecord, 10)
     this.$refs.scroll.refresh()
     //console.log("被激活");
   },

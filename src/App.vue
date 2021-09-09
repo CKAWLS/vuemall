@@ -1,10 +1,10 @@
 <template>
-  <main-tab-bar></main-tab-bar>
   <router-view v-slot="{ Component }">
-    <keep-alive include="home,about" exclude="Detail">
+    <keep-alive include="home,about">
       <component :is="Component" />
     </keep-alive>
   </router-view>
+  <main-tab-bar v-if="isShow"></main-tab-bar>
 </template>
 
 <script>
@@ -14,6 +14,11 @@ export default {
   name: 'App',
   components: {
     MainTabBar
+  },
+  computed: {
+    isShow() {
+      return !(this.$route.path.indexOf('detail') > -1)
+    }
   }
 }
 </script>

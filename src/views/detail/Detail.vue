@@ -1,9 +1,13 @@
 <template>
   <div id="detail">
-    <detail-nav-bar :title=title class="nav-bar" @navClick="scrollToX"></detail-nav-bar>
+    <detail-nav-bar :title=title
+                    class="nav-bar"
+                    @navClick="scrollToX"
+                    ref="navBar"></detail-nav-bar>
     <scroll :pull-up-load="false"
             :probe-type="3"
             class="content"
+            @scroll="detailScroll"
             ref="scroll">
       <detail-swiper :swiper-img="swiperImg" class="detail-swiper"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
@@ -12,6 +16,7 @@
       <detail-comment-info :comment-info="commentInfo" ref="comment"></detail-comment-info>
       <goods-list :goods="recommendInfo" @imgLoad="imgLoad" ref="recommend"></goods-list>
     </scroll>
+    <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 
@@ -22,6 +27,7 @@ import DetailBaseInfo from "./childComponents/DetailBaseInfo";
 import DetailShop from "./childComponents/DetailShop";
 import DetailGoodsInfo from "./childComponents/DetailGoodsInfo";
 import DetailCommentInfo from "./childComponents/DetailCommentInfo";
+import DetailBottomBar from "./childComponents/DetailBottomBar";
 
 import Scroll from "../../components/common/scroll/Scroll";
 import {detailRequest, recommendRequest, Goods, Shop} from "../../network/detail/detail";
@@ -29,8 +35,9 @@ import GoodsList from "../../components/content/good/GoodsList";
 import {debounce} from "../../components/common/utils";
 
 export default {
-  name: "Detail",
+  name: "detail",
   components: {
+    DetailBottomBar,
     DetailCommentInfo,
     DetailGoodsInfo,
     DetailNavBar,
@@ -52,7 +59,8 @@ export default {
       commentInfo: {},
       recommendInfo: {},
       navClickPosition: [],
-      getNavClickPosition: null
+      getNavClickPosition: null,
+      currIndex: 0
     }
   },
   computed: {},
@@ -87,18 +95,6 @@ export default {
       //   this.navClickPosition.push(this.$refs.recommend.$el.offsetTop)
       //   console.log(this.navClickPosition)
       // })
-
-      // 防抖函数 提高性能
-      this.getNavClickPosition = debounce(() => {
-        this.navClickPosition = []
-
-        this.navClickPosition.push(0)
-        this.navClickPosition.push(this.$refs.comment.$el.offsetTop)
-        this.navClickPosition.push(this.$refs.shop.$el.offsetTop)
-        this.navClickPosition.push(this.$refs.recommend.$el.offsetTop)
-
-        //console.log(this.navClickPosition)
-      },500)
     })
 
     // 获取推荐数据
@@ -108,25 +104,48 @@ export default {
     })
 
   },
+  updated() {
+    this._getOffsetTop()
+  },
   methods: {
     imageLoad() {
       if (this.$route.path.indexOf('detail') > -1) {
         this.$refs.scroll.refresh()
       }
-      this.getNavClickPosition()
     },
     imgLoad() {
+      // 防抖函数 提高性能
       this.$refs.scroll.refresh()
-      this.getNavClickPosition()
     },
-    scrollToX(index){
+    scrollToX(index) {
       // switch (index){
       //   case 0: this.$refs.scroll.scrollTo(0, 0, 300);break
       //   case 1: this.$refs.scroll.scrollTo(0, -this.$refs.shop.$el.offsetTop, 300);break
       //   case 2: this.$refs.scroll.scrollTo(0, -this.$refs.comment.$el.offsetTop, 300);break
       //   case 3: this.$refs.scroll.scrollTo(0, -this.$refs.recommend.$el.offsetTop, 300);break
       // }
-      this.$refs.scroll.scrollTo(0, -this.navClickPosition[index]+44, 300)
+      this.$refs.scroll.scrollTo(0, -this.navClickPosition[index] + 44, 300)
+    },
+    detailScroll(position) {
+      const length = this.navClickPosition.length
+      let y = -position.y + 44
+      for (let i = 0; i < this.navClickPosition.length; i++) {
+        if (i !== this.currIndex && (i < length - 1 && y >= this.navClickPosition[i] && y < this.navClickPosition[i + 1])
+          || (i === length - 1 && y >= this.navClickPosition[i])) {
+          this.currIndex = i
+          this.$refs.navBar.currentIndex = this.currIndex
+        } else {
+          this.index = 0
+        }
+      }
+    },
+    _getOffsetTop() {
+      this.navClickPosition = []
+
+      this.navClickPosition.push(0)
+      this.navClickPosition.push(this.$refs.comment.$el.offsetTop)
+      this.navClickPosition.push(this.$refs.shop.$el.offsetTop)
+      this.navClickPosition.push(this.$refs.recommend.$el.offsetTop)
     }
   }
 }
