@@ -10,9 +10,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .scroll-top{
   position: fixed;
+  width: 50px;
+  height: 50px;
   bottom: 44px;
   right: 6px;
 }

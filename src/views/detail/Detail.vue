@@ -16,7 +16,12 @@
       <detail-comment-info :comment-info="commentInfo" ref="comment"></detail-comment-info>
       <goods-list :goods="recommendInfo" @imgLoad="imgLoad" ref="recommend"></goods-list>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <back-top class="back-top" @click="backToTop" v-show="this.isUpToTop">
+      <template v-slot:scrollTop>
+        <img src="../../assets/img/top.png" alt="">
+      </template>
+    </back-top>
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -32,7 +37,8 @@ import DetailBottomBar from "./childComponents/DetailBottomBar";
 import Scroll from "../../components/common/scroll/Scroll";
 import {detailRequest, recommendRequest, Goods, Shop} from "../../network/detail/detail";
 import GoodsList from "../../components/content/good/GoodsList";
-import {debounce} from "../../components/common/utils";
+import {scrollToTop} from "../../common/mixin";
+
 
 export default {
   name: "detail",
@@ -63,6 +69,7 @@ export default {
       currIndex: 0
     }
   },
+  mixins: [scrollToTop],
   computed: {},
   created() {
     // 获取iid
@@ -138,6 +145,9 @@ export default {
           this.index = 0
         }
       }
+
+      // 监听滚动到顶部的图标是否出现
+      this.isUpToTop = (-position.y) > 1000
     },
     _getOffsetTop() {
       this.navClickPosition = []
@@ -146,6 +156,18 @@ export default {
       this.navClickPosition.push(this.$refs.comment.$el.offsetTop)
       this.navClickPosition.push(this.$refs.shop.$el.offsetTop)
       this.navClickPosition.push(this.$refs.recommend.$el.offsetTop)
+    },
+    addToCart(){
+      // 获取添加到购物车的商品的信息
+      const product = {};
+      product.img = this.swiperImg[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.id = this.id;
+      product.checked = false;
+      // 将商品添加的购物车
+      this.$store.dispatch('addCart', product)
     }
   }
 }
@@ -172,5 +194,17 @@ export default {
 .detail-swiper {
   height: 350px;
   z-index: 0;
+}
+
+.back-top {
+  width: 50px;
+  height: 50px;
+  bottom: 59px;
+  z-index: 999;
+  display: flex;
+}
+
+.back-top{
+  bottom: 59px;
 }
 </style>
